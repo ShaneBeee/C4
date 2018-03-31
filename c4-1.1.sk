@@ -1,7 +1,13 @@
-# C4 -- > Have a little more fun with explosions. 
+#    ____    _  _   
+#   / ___|  | || |  
+#  | |      | || |_ 
+#  | |___   |__   _|
+#   \____|     |_|  
+                  
+#  --  Have a little more fun with explosions. 
 
 options:
-    Version: 1.0
+    version: 1.1 # <--DO NOT edit version number
         
 # -- DO NOT EDIT BELOW THIS LINE OR SUPPORT WILL BE LOST -- #  
   
@@ -21,8 +27,45 @@ on load:
     set {_grenade} to 1 poisonous potato named "&9Grenade"
     set 1st line of lore of {_grenade} to "&bRight-Click to throw grenade"
     register new shaped recipe for {_grenade} using air, air, air, redstone, poisonous potato, tnt, air, air, air
-    send "[&bC4&r] - &2Loaded Successfully" to console
-    send "[&bC4&r] - &2Running version: {@Version}" to console
+	
+# --- Loading Version --- #
+
+on load:
+	send "[&bC4&r] - &2Loaded Successfully" to console
+	if text from "https://pastebin.com/raw/dnSjnhDQ" is not "{@version}":
+		set {_version} to text from "https://pastebin.com/raw/dnSjnhDQ"
+		send "[&bC4&r] - &2Running current version: {@version}" to console
+		send "[&bC4&r] - &cUpdate available, version: %{_version}%" to console
+	if text from "https://pastebin.com/raw/dnSjnhDQ" is "{@version}":
+		send "[&bC4&r] - &2Running current version: {@version}" to console
+		
+on join:
+	wait 1 second
+	if player has permission "c4.admin":
+		if text from "https://pastebin.com/raw/dnSjnhDQ" is not "{@version}":
+			set {_version} to text from "https://pastebin.com/raw/dnSjnhDQ"
+			send "[&bC4&r] - &2Running current version: {@version}" to player
+			send "[&bC4&r] - &cUpdate available, version: %{_version}%" to player
+
+# --- Crafting Permissions --- #
+
+on craft of poisonous potato:
+	if name of item is "&9Grenade":
+		if player does not have permission "c4.craft.grenade":
+			cancel event
+			send "[&bC4&r] - &cYou do not have permission to craft grenades" to player
+			
+on craft of book:
+	if name of item is "&9Detonator":
+		if player does not have permission "c4.craft.detonator":
+			cancel event
+			send "[&bC4&r] - &cYou do not have permission to craft grenades" to player
+			
+on craft of head:
+	if name of item is "&cC4":
+		if player does not have permission "c4.craft.charges":
+			cancel event
+			send "[&bC4&r] - &cYou do not have permission to craft grenades" to player
 
 # --- Commands --- #
 
