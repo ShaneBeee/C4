@@ -1,18 +1,18 @@
-#    ____    _  _   
-#   / ___|  | || |  
-#  | |      | || |_ 
+#    ____    _  _
+#   / ___|  | || |
+#  | |      | || |_
 #  | |___   |__   _|
-#   \____|     |_|  
-                  
-#  --  Have a little more fun with explosions. 
+#   \____|     |_|
+
+#  --  Have a little more fun with explosions.
 
 options:
-    version: 1.1 # <--DO NOT edit version number
-        
-# -- DO NOT EDIT BELOW THIS LINE OR SUPPORT WILL BE LOST -- #  
-  
+    version: 1.2 # <--DO NOT edit version number
+
+# -- DO NOT EDIT BELOW THIS LINE OR SUPPORT WILL BE LOST -- #
+
 # --- Loading Recipes --- #
-        
+
 on load:
     set {_detonator} to 1 book named "&9Detonator"
     set 1st line of lore of {_detonator} to "BOOM TIME - 3 Charges"
@@ -27,7 +27,7 @@ on load:
     set {_grenade} to 1 poisonous potato named "&9Grenade"
     set 1st line of lore of {_grenade} to "&bRight-Click to throw grenade"
     register new shaped recipe for {_grenade} using air, air, air, redstone, poisonous potato, tnt, air, air, air
-	
+
 # --- Loading Version --- #
 
 on load:
@@ -38,7 +38,7 @@ on load:
 		send "[&bC4&r] - &cUpdate available, version: %{_version}%" to console
 	if text from "https://pastebin.com/raw/dnSjnhDQ" is "{@version}":
 		send "[&bC4&r] - &2Running current version: {@version}" to console
-		
+
 on join:
 	wait 1 second
 	if player has permission "c4.admin":
@@ -54,13 +54,13 @@ on craft of poisonous potato:
 		if player does not have permission "c4.craft.grenade":
 			cancel event
 			send "[&bC4&r] - &cYou do not have permission to craft grenades" to player
-			
+
 on craft of book:
 	if name of item is "&9Detonator":
 		if player does not have permission "c4.craft.detonator":
 			cancel event
 			send "[&bC4&r] - &cYou do not have permission to craft grenades" to player
-			
+
 on craft of head:
 	if name of item is "&cC4":
 		if player does not have permission "c4.craft.charges":
@@ -94,26 +94,76 @@ command /c4 [<text>]:
                 delete {explode.%player%.3}
         if player does not have permission "c4.admin":
             send "[&9C4&r] - &cYou do not have permission for this command" to player
-            
+
 # -----C4----- #
-            
+
+# --- Setting Charges --- #
+
 on right-click holding a head:
     if name of player's tool is "&cC4":
-        if {explode.%player%.1} is not set:
-            set {explode.%player%.1} to location at event-location
-            send "&c[C4] &2##1 &rplaced at %{explode.%player%.1}%" to player
-            stop
-        else if {explode.%player%.2} is not set:
-            set {explode.%player%.2} to location at event-location
-            send "&c[C4] &2##2 &rplaced at %{explode.%player%.2}%" to player
-            stop
-        else if {explode.%player%.3} is not set:
-            set {explode.%player%.3} to location at event-location
-            send "&c[C4]&2 ##3 &rplaced at %{explode.%player%.3}%" to player
-            stop
-        else:
-            cancel event
-            send "&c[C4] &4All placed, use your detonator to detonate charges"
+        if player is not sneaking:
+            if block at event-location is not air:
+                if {explode.%player%.1} is not set:
+                    set {explode.%player%.1} to location at event-location
+                    send "&c[C4] &2##1 &rplaced at %{explode.%player%.1}%" to player
+                    stop
+                else if {explode.%player%.2} is not set:
+                    set {explode.%player%.2} to location at event-location
+                    send "&c[C4] &2##2 &rplaced at %{explode.%player%.2}%" to player
+                    stop
+                else if {explode.%player%.3} is not set:
+                    set {explode.%player%.3} to location at event-location
+                    send "&c[C4]&2 ##3 &rplaced at %{explode.%player%.3}%" to player
+                    stop
+                else:
+                    cancel event
+                    send "&c[C4] &4All placed, use your detonator to detonate charges"
+        if player is sneaking:
+            if {explode.%player%.1} is not set:
+                cancel event
+                set {c4shoot.%player%} to true
+                make the player shoot a snowball at speed 2
+                remove 1 of item from player's inventory
+                stop
+            else if {explode.%player%.2} is not set:
+                cancel event
+                set {c4shoot.%player%} to true
+                make the player shoot a snowball at speed 2
+                remove 1 of item from player's inventory
+                stop
+            else if {explode.%player%.3} is not set:
+                cancel event
+                set {c4shoot.%player%} to true
+                make the player shoot a snowball at speed 2
+                remove 1 of item from player's inventory
+                stop
+            else:
+                cancel event
+                send "&c[C4] &4All placed, use your detonator to detonate charges"
+
+on projectile hit:
+    if projectile is a snowball:
+        if {c4shoot.%shooter%} is true:
+            if {explode.%shooter%.1} is not set:
+                set {explode.%shooter%.1} to location at event-location
+                set block at event-location to head
+                send "&c[C4] &2##1 &rplaced at %{explode.%shooter%.1}%" to shooter
+                set {c4shoot.%shooter%} to false
+                stop
+            if {explode.%shooter%.2} is not set:
+                set {explode.%shooter%.2} to location at event-location
+                set block at event-location to head
+                send "&c[C4] &2##1 &rplaced at %{explode.%shooter%.2}%" to shooter
+                set {c4shoot.%shooter%} to false
+                stop
+            if {explode.%shooter%.3} is not set:
+                set {explode.%shooter%.3} to location at event-location
+                set block at event-location to head
+                send "&c[C4] &2##1 &rplaced at %{explode.%shooter%.3}%" to shooter
+                set {c4shoot.%shooter%} to false
+                stop
+
+# --- Detonating Charges --- #
 
 on right-click holding a book:
     if name of player's tool contains "&9Detonator":
@@ -130,12 +180,8 @@ on right-click holding a book:
             delete {explode.%player%.3}
         else:
             send "&c[C4]: &4&lYou have no charges set."
-                
 
-        
-
-#-----Grenades-----
-
+# -----Grenades----- #
 
 command /grenade <number>:
     trigger:
@@ -152,7 +198,7 @@ on projectile hit:
 
 on right-click:
     player's tool is a poisonous potato named "&9Grenade" with lore "&bRight-Click to throw grenade"
+    cancel event
     make the player shoot a snowball at speed 2
     set {kaboom.%player%} to true
     remove 1 of item from player's inventory
- 
