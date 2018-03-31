@@ -7,11 +7,12 @@
 #  --  Have a little more fun with explosions.
 
 options:
-    version: 1.1 # <--DO NOT edit version number
+    version: 1.2 # <--DO NOT edit version number
 
 # -- DO NOT EDIT BELOW THIS LINE OR SUPPORT WILL BE LOST -- #
 
 # --- Loading Recipes --- #
+
 on load:
     set {_detonator} to 1 book named "&9Detonator"
     set 1st line of lore of {_detonator} to "BOOM TIME - 3 Charges"
@@ -96,23 +97,73 @@ command /c4 [<text>]:
 
 # -----C4----- #
 
+# --- Setting Charges --- #
+
 on right-click holding a head:
     if name of player's tool is "&cC4":
-        if {explode.%player%.1} is not set:
-            set {explode.%player%.1} to location at event-location
-            send "&c[C4] &2##1 &rplaced at %{explode.%player%.1}%" to player
-            stop
-        else if {explode.%player%.2} is not set:
-            set {explode.%player%.2} to location at event-location
-            send "&c[C4] &2##2 &rplaced at %{explode.%player%.2}%" to player
-            stop
-        else if {explode.%player%.3} is not set:
-            set {explode.%player%.3} to location at event-location
-            send "&c[C4]&2 ##3 &rplaced at %{explode.%player%.3}%" to player
-            stop
-        else:
-            cancel event
-            send "&c[C4] &4All placed, use your detonator to detonate charges"
+        if player is not sneaking:
+            if block at event-location is not air:
+                if {explode.%player%.1} is not set:
+                    set {explode.%player%.1} to location at event-location
+                    send "&c[C4] &2##1 &rplaced at %{explode.%player%.1}%" to player
+                    stop
+                else if {explode.%player%.2} is not set:
+                    set {explode.%player%.2} to location at event-location
+                    send "&c[C4] &2##2 &rplaced at %{explode.%player%.2}%" to player
+                    stop
+                else if {explode.%player%.3} is not set:
+                    set {explode.%player%.3} to location at event-location
+                    send "&c[C4]&2 ##3 &rplaced at %{explode.%player%.3}%" to player
+                    stop
+                else:
+                    cancel event
+                    send "&c[C4] &4All placed, use your detonator to detonate charges"
+        if player is sneaking:
+            if {explode.%player%.1} is not set:
+                cancel event
+                set {c4shoot.%player%} to true
+                make the player shoot a snowball at speed 2
+                remove 1 of item from player's inventory
+                stop
+            else if {explode.%player%.2} is not set:
+                cancel event
+                set {c4shoot.%player%} to true
+                make the player shoot a snowball at speed 2
+                remove 1 of item from player's inventory
+                stop
+            else if {explode.%player%.3} is not set:
+                cancel event
+                set {c4shoot.%player%} to true
+                make the player shoot a snowball at speed 2
+                remove 1 of item from player's inventory
+                stop
+            else:
+                cancel event
+                send "&c[C4] &4All placed, use your detonator to detonate charges"
+
+on projectile hit:
+    if projectile is a snowball:
+        if {c4shoot.%shooter%} is true:
+            if {explode.%shooter%.1} is not set:
+                set {explode.%shooter%.1} to location at event-location
+                set block at event-location to head
+                send "&c[C4] &2##1 &rplaced at %{explode.%shooter%.1}%" to shooter
+                set {c4shoot.%shooter%} to false
+                stop
+            if {explode.%shooter%.2} is not set:
+                set {explode.%shooter%.2} to location at event-location
+                set block at event-location to head
+                send "&c[C4] &2##1 &rplaced at %{explode.%shooter%.2}%" to shooter
+                set {c4shoot.%shooter%} to false
+                stop
+            if {explode.%shooter%.3} is not set:
+                set {explode.%shooter%.3} to location at event-location
+                set block at event-location to head
+                send "&c[C4] &2##1 &rplaced at %{explode.%shooter%.3}%" to shooter
+                set {c4shoot.%shooter%} to false
+                stop
+
+# --- Detonating Charges --- #
 
 on right-click holding a book:
     if name of player's tool contains "&9Detonator":
@@ -130,11 +181,7 @@ on right-click holding a book:
         else:
             send "&c[C4]: &4&lYou have no charges set."
 
-
-
-
-#-----Grenades-----
-
+# -----Grenades----- #
 
 command /grenade <number>:
     trigger:
@@ -151,14 +198,7 @@ on projectile hit:
 
 on right-click:
     player's tool is a poisonous potato named "&9Grenade" with lore "&bRight-Click to throw grenade"
+    cancel event
     make the player shoot a snowball at speed 2
     set {kaboom.%player%} to true
     remove 1 of item from player's inventory
-
-
-# -- a test
-
-command /testgren:
-    trigger:
-        send "testing thigs" to player
-command
