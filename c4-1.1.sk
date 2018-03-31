@@ -161,3 +161,4 @@ on right-click:
 command /testgren:
     trigger:
         send "testing thigs" to player
+command
