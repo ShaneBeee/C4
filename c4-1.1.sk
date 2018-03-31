@@ -1,12 +1,17 @@
-# C4 -- > Have a little more fun with explosions. 
+#    ____    _  _
+#   / ___|  | || |
+#  | |      | || |_
+#  | |___   |__   _|
+#   \____|     |_|
+
+#  --  Have a little more fun with explosions.
 
 options:
-    Version: 1.0
-        
-# -- DO NOT EDIT BELOW THIS LINE OR SUPPORT WILL BE LOST -- #  
-  
+    version: 1.1 # <--DO NOT edit version number
+
+# -- DO NOT EDIT BELOW THIS LINE OR SUPPORT WILL BE LOST -- #
+
 # --- Loading Recipes --- #
-        
 on load:
     set {_detonator} to 1 book named "&9Detonator"
     set 1st line of lore of {_detonator} to "BOOM TIME - 3 Charges"
@@ -21,8 +26,45 @@ on load:
     set {_grenade} to 1 poisonous potato named "&9Grenade"
     set 1st line of lore of {_grenade} to "&bRight-Click to throw grenade"
     register new shaped recipe for {_grenade} using air, air, air, redstone, poisonous potato, tnt, air, air, air
-    send "[&bC4&r] - &2Loaded Successfully" to console
-    send "[&bC4&r] - &2Running version: {@Version}" to console
+
+# --- Loading Version --- #
+
+on load:
+	send "[&bC4&r] - &2Loaded Successfully" to console
+	if text from "https://pastebin.com/raw/dnSjnhDQ" is not "{@version}":
+		set {_version} to text from "https://pastebin.com/raw/dnSjnhDQ"
+		send "[&bC4&r] - &2Running current version: {@version}" to console
+		send "[&bC4&r] - &cUpdate available, version: %{_version}%" to console
+	if text from "https://pastebin.com/raw/dnSjnhDQ" is "{@version}":
+		send "[&bC4&r] - &2Running current version: {@version}" to console
+
+on join:
+	wait 1 second
+	if player has permission "c4.admin":
+		if text from "https://pastebin.com/raw/dnSjnhDQ" is not "{@version}":
+			set {_version} to text from "https://pastebin.com/raw/dnSjnhDQ"
+			send "[&bC4&r] - &2Running current version: {@version}" to player
+			send "[&bC4&r] - &cUpdate available, version: %{_version}%" to player
+
+# --- Crafting Permissions --- #
+
+on craft of poisonous potato:
+	if name of item is "&9Grenade":
+		if player does not have permission "c4.craft.grenade":
+			cancel event
+			send "[&bC4&r] - &cYou do not have permission to craft grenades" to player
+
+on craft of book:
+	if name of item is "&9Detonator":
+		if player does not have permission "c4.craft.detonator":
+			cancel event
+			send "[&bC4&r] - &cYou do not have permission to craft grenades" to player
+
+on craft of head:
+	if name of item is "&cC4":
+		if player does not have permission "c4.craft.charges":
+			cancel event
+			send "[&bC4&r] - &cYou do not have permission to craft grenades" to player
 
 # --- Commands --- #
 
@@ -51,9 +93,9 @@ command /c4 [<text>]:
                 delete {explode.%player%.3}
         if player does not have permission "c4.admin":
             send "[&9C4&r] - &cYou do not have permission for this command" to player
-            
+
 # -----C4----- #
-            
+
 on right-click holding a head:
     if name of player's tool is "&cC4":
         if {explode.%player%.1} is not set:
@@ -87,9 +129,9 @@ on right-click holding a book:
             delete {explode.%player%.3}
         else:
             send "&c[C4]: &4&lYou have no charges set."
-                
 
-        
+
+
 
 #-----Grenades-----
 
@@ -112,4 +154,10 @@ on right-click:
     make the player shoot a snowball at speed 2
     set {kaboom.%player%} to true
     remove 1 of item from player's inventory
- 
+
+
+# -- a test
+
+command /testgren:
+    trigger:
+        send "testing thigs" to player
