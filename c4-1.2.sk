@@ -27,6 +27,9 @@ on load:
     set {_grenade} to 1 poisonous potato named "&9Grenade"
     set 1st line of lore of {_grenade} to "&bRight-Click to throw grenade"
     register new shaped recipe for {_grenade} using air, air, air, redstone, poisonous potato, tnt, air, air, air
+    set {_grenade.stun} to 1 poisonous potato named "&9Stun Grenade"
+    set 1st line of lore of {_grenade.stun} to "&bRight-Click to throw stun grenade"
+    register new shaped recipe for {_grenade.stun} using air, air, air, redstone, poisonous potato, tnt, arrow, arrow, arrow
 
 # --- Loading Version --- #
 
@@ -202,3 +205,39 @@ on right-click:
     make the player shoot a snowball at speed 2
     set {kaboom.%player%} to true
     remove 1 of item from player's inventory
+
+# ----- Stun Grenades ----- #
+
+command /stun <number>:
+    trigger:
+        if player has permission "c4.admin":
+            set {_stungrenade} to 1 poisonous potato named "&9Stun Grenade" with lore "&bRight-Click to throw stun grenade"
+            give player arg-1 of {_stungrenade}
+
+on right-click:
+    player's tool is a poisonous potato named "&9Stun Grenade" with lore "&bRight-Click to throw stun grenade"
+    cancel event
+    make the player shoot a snowball at speed 2
+    set {stungrenade.%player%} to true
+    remove 1 of item from player's inventory
+
+on projectile hit:
+    if projectile is a snowball:
+        if {stungrenade.%shooter%} is true:
+            wait 1 second
+            detonate trailing ball firework colored white at location 2 above event-location
+            detonate trailing ball firework colored white at location 2 above and 3 north of event-location
+            detonate trailing ball firework colored white at location 2 above and 3 south of event-location
+            detonate trailing ball firework colored white at location 2 above and 3 east of event-location
+            detonate trailing ball firework colored white at location 2 above and 3 west of event-location
+            wait 10 ticks
+            detonate trailing ball firework colored white at location 2 above event-location
+            detonate trailing ball firework colored white at location 2 above and 3 north of event-location
+            detonate trailing ball firework colored white at location 2 above and 3 south of event-location
+            detonate trailing ball firework colored white at location 2 above and 3 east of event-location
+            detonate trailing ball firework colored white at location 2 above and 3 west of event-location
+            set {stungrenade.%shooter%} to false
+            loop players in radius 8 around event-location:
+                apply blindness to loop-player for 5 seconds
+                apply nausea to loop-player for 7 seconds
+                damage loop-player by 1 heart
