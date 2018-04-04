@@ -29,7 +29,7 @@ on load:
     register new shaped recipe for {_grenade} using air, air, air, redstone, poisonous potato, tnt, air, air, air
     set {_grenade.stun} to 1 poisonous potato named "&9Stun Grenade"
     set 1st line of lore of {_grenade.stun} to "&bRight-Click to throw stun grenade"
-    register new shaped recipe for {_grenade.stun} using air, air, air, redstone, poisonous potato, tnt, arrow, arrow, arrow
+    register new shaped recipe for {_grenade.stun} using air, air, air, redstone, poisonous potato, tnt, cactus, cactus, cactus
 
 # --- Loading Version --- #
 
@@ -211,7 +211,7 @@ on right-click:
 
 # ----- Stun Grenades ----- #
 
-command /stun <number>:
+command /stungrenade <number>:
     trigger:
         if player has permission "c4.admin":
             set {_stungrenade} to 1 poisonous potato named "&9Stun Grenade" with lore "&bRight-Click to throw stun grenade"
