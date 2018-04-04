@@ -58,6 +58,12 @@ on craft of poisonous potato:
 			cancel event
 			send "[&bC4&r] - &cYou do not have permission to craft grenades" to player
 
+on craft of poisonous potato:
+    if name of item is "&9Stun Grenade":
+        if player does not have permission "c4.craft.stungrenade":
+            cancel event
+            send "[&bC4&r] - &cYou do not have permission to craft stun grenades" to player
+
 on craft of book:
 	if name of item is "&9Detonator":
 		if player does not have permission "c4.craft.detonator":
@@ -79,6 +85,7 @@ command /c4 [<text>]:
                 send "[&bC4&r] &c/c4 detonator &r- Receive 1 detonator" to player
                 send "[&bC4&r] &c/c4 charges &r- Receive 3 charges" to player
                 send "[&bC4&r] &c/grenade <number> &r- Receive grenades" to player
+                send "[&bC4&r] &c/stungrenade <number> &r- Receive stun grenades" to player
             if arg-1 is "detonator":
                 set {_detonator} to 1 book named "&9Detonator"
                 set 1st line of lore of {_detonator} to "BOOM TIME - 3 Charges"
@@ -91,10 +98,6 @@ command /c4 [<text>]:
                 set 2nd line of lore of {_c4} to "&2Use your detonator to"
                 set 3rd line of lore of {_c4} to "&2detonate your charges"
                 give player 3 of {_c4}
-            if arg-1 is "reset":
-                delete {explode.%player%.1}
-                delete {explode.%player%.2}
-                delete {explode.%player%.3}
         if player does not have permission "c4.admin":
             send "[&9C4&r] - &cYou do not have permission for this command" to player
 
